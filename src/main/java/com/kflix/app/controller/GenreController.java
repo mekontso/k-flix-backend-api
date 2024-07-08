@@ -23,4 +23,14 @@ public class GenreController {
     public ResponseEntity<?> updateGenre(@PathVariable Long id, @Valid @RequestBody GenreDto genreDto) {
         return genreService.updateGenre(id, genreDto);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteGenre(@PathVariable Long id) {
+        return genreService.deleteGenre(id);
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getGenre(@PathVariable Long id) {
+        return genreService.getGenre(id);
+    }
 }

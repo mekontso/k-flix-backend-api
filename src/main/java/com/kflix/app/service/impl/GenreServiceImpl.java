@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
 
+    private static final Logger logger = LoggerFactory.getLogger(GenreServiceImpl.class);
     private final GenreRepository genreRepository;
     private final ModelMapper modelMapper;
-    private static final Logger logger = LoggerFactory.getLogger(GenreServiceImpl.class);
 
     @Override
     public ResponseEntity<?> createGenre(GenreDtoCreate genreDtoCreate) {
@@ -60,12 +60,31 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public ResponseEntity<?> deleteGenre(Long id) {
-        return null;
+        try {
+            if (!genreRepository.existsById(id)) {
+                return ApiResponse.notFound("Genre with id " + id + " not found");
+            }
+            genreRepository.deleteById(id);
+            return ApiResponse.ok("Genre deleted with id " + id + " successfully", null);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return ApiResponse.internalServerError("Error deleting genre", null);
+        }
     }
 
     @Override
     public ResponseEntity<?> getGenre(Long id) {
-        return null;
+        try {
+            var optionalGenre = genreRepository.findById(id);
+
+            if (optionalGenre.isEmpty())
+                return ApiResponse.notFound("Genre with id " + id + " not found");
+
+            return ApiResponse.ok("Genre retrieved successfully", modelMapper.map(optionalGenre.get(), GenreDto.class));
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return ApiResponse.internalServerError("Error deleting genre", null);
+        }
     }
 
     @Override
