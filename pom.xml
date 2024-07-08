@@ -69,6 +69,22 @@
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://search.maven.org/artifact/com.github.f4b6a3/ksuid-creator -->
+		<dependency>
+			<groupId>com.github.f4b6a3</groupId>
+			<artifactId>ksuid-creator</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
