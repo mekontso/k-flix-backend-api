@@ -39,8 +39,23 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public ResponseEntity<?> updateGenre(Long id, GenreDtoCreate genreDtoCreate) {
-        return null;
+    public ResponseEntity<?> updateGenre(Long id, GenreDto genreDto) {
+        try {
+            var genre = genreRepository.findById(id).orElse(null);
+
+            if (genre == null) {
+                return ApiResponse.notFound("Genre with id " + id + " not found");
+            }
+            if (genreRepository.existsByName(genreDto.getName())) {
+                return ApiResponse.badRequest("Genre already exist with name " + genreDto.getName(), null);
+            }
+            genre.setName(genreDto.getName());
+            genreRepository.save(genre);
+            return ApiResponse.ok("Genre updated successfully", modelMapper.map(genre, GenreDto.class));
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return ApiResponse.internalServerError("Error updating genre", null);
+        }
     }
 
     @Override

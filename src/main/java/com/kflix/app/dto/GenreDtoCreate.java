@@ -1,6 +1,6 @@
 package com.kflix.app.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +8,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class GenreDtoCreate{
+public class GenreDtoCreate {
     Long id;
-    @NotNull(message = "Genre name is required") String name;
+    @NotBlank(message = "Genre name is required")
+    String name;
 }
