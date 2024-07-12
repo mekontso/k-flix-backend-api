@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/genre")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class GenreController {
     private final GenreService genreService;
 
