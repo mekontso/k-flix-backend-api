@@ -8,7 +8,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class GenreDtoCreate {
+public class ContentTypeDto {
     private Long id;
     @NotBlank(message = "Genre name is required")
     private String name;
