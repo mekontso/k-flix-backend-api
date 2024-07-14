@@ -17,6 +17,7 @@ public class Content extends BaseEntity {
     private String description;
     private LocalDate releaseDate;
     private Integer duration;
+    private String thumbnail;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private ContentType contentType;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
