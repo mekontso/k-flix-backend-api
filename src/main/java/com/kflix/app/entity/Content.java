@@ -18,6 +18,8 @@ public class Content extends BaseEntity {
     private LocalDate releaseDate;
     private Integer duration;
     private String thumbnail;
+    private String filename;
+    private Long size;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private ContentType contentType;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
