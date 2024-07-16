@@ -1,9 +1,8 @@
 package com.kflix.app.service;
 
 import com.kflix.app.dto.ContentCreateDto;
-import jakarta.validation.Valid;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface ContentService {
     ResponseEntity<?> createContent(ContentCreateDto contentCreateDto);
@@ -14,4 +13,5 @@ public interface ContentService {
 
     ResponseEntity<?> getAllContent(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
 
+    ResponseEntity<?> streamContent(String filename, String rangeHeader);
 }

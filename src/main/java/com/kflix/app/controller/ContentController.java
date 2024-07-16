@@ -77,4 +77,10 @@ public class ContentController {
             @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
         return contentService.getAllContent(pageNumber, pageSize, sortBy, sortDir);
     }
+
+
+    @GetMapping("/stream/{filename}")
+    public ResponseEntity<?> streamContent(@PathVariable String filename, @RequestHeader(value = "Range", required = false) String rangeHeader){
+        return contentService.streamContent(filename,rangeHeader);
+    }
 }

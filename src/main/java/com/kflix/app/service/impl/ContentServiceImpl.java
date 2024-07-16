@@ -17,16 +17,28 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.kflix.app.util.AppConstants.DEFAULT_CHUNK_SIZE;
 
 @Service
 @RequiredArgsConstructor
@@ -131,6 +143,64 @@ public class ContentServiceImpl implements ContentService {
         } catch (RuntimeException re) {
             logger.error("Unexpected error while getting content: {}", re.getMessage(), re);
             return ApiResponse.internalServerError("Unexpected error while getting content", null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> streamContent(String filename, String rangeHeader) {
+        try {
+            Path filePath = Paths.get(System.getProperty("user.home") + appProperties.getContentUploadPath()).resolve(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+
+            long fileLength = resource.contentLength();
+            long rangeStart = 0;
+            long rangeEnd = DEFAULT_CHUNK_SIZE - 1;
+
+            if (StringUtils.hasText(rangeHeader)) {
+                // Parse the range header
+                String[] ranges = rangeHeader.replace("bytes=", "").split("-");
+                rangeStart = Long.parseLong(ranges[0]);
+                if (ranges.length > 1) {
+                    rangeEnd = Long.parseLong(ranges[1]);
+                } else {
+                    rangeEnd = fileLength - 1;
+                }
+            }
+
+            // Ensure the ranges are within the valid range
+            rangeEnd = Math.min(rangeEnd, fileLength - 1);
+            if (rangeStart > rangeEnd) {
+                return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
+                        .header("Content-Range", "bytes */" + fileLength)
+                        .build();
+            }
+
+            // Read the byte range from the file
+            byte[] data;
+            try (RandomAccessFile randomAccessFile = new RandomAccessFile(resource.getFile(), "r")) {
+                randomAccessFile.seek(rangeStart);
+                int bytesToRead = (int) (rangeEnd - rangeStart + 1);
+                data = new byte[bytesToRead];
+                randomAccessFile.readFully(data);
+            }
+
+            // Prepare the response with the partial content
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", Files.probeContentType(resource.getFile().toPath()));
+            headers.add("Content-Range", "bytes " + rangeStart + "-" + rangeEnd + "/" + fileLength);
+            headers.add("Accept-Ranges", "bytes");
+
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                    .headers(headers)
+                    .body(data);
+        } catch (IOException e) {
+            logger.error("Error streaming content: {}", filename, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

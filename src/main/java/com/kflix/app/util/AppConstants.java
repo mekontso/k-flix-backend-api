@@ -5,4 +5,5 @@ public class AppConstants {
     public static final String DEFAULT_PAGE_SIZE = "10";
     public static final String DEFAULT_SORT_BY = "id";
     public static final String DEFAULT_SORT_DIRECTION = "asc";
+    public static final long DEFAULT_CHUNK_SIZE = 1024 * 1024; // 1MB
 }
