@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### DB seed ###
+/src/main/java/com/kflix/app/config/DatabaseSeeder.java

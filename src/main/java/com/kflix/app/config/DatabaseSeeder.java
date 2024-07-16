@@ -34,7 +34,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private String sampleFile() throws IOException {
         String fileName = "5 - The Anatomy of a Flutter App.mp4";
         String path = "/home/neoworlder/k-flix/";
-        Path uploadPath = Paths.get(System.getProperty("user.home")+ new AppProperties().getContentUploadPath());
+        Path uploadPath = Paths.get("/home/neoworlder/k-flix/content");
         String fileCode = String.valueOf(KsuidCreator.getKsuid());
         String fileExtension = getFileExtension(fileName);
         String newFileName = fileCode + fileExtension;
