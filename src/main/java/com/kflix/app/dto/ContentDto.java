@@ -20,6 +20,8 @@ public class ContentDto {
 
     private String thumbnail;
 
+    private String filename;
+
     private ContentTypeDto contentTypeDto;
 
     private GenreDto genreDto;
